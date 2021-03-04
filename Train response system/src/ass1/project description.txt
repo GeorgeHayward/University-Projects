@@ -1,0 +1,176 @@
+Assignment 1: Specification
+1. Introduction
+In this assignment you will implement a prototype of a text-based conversational agent (= dialogue system) that is able to converse with a human in ordinary natural language and provide rail information for a Sydney suburban line (Northern Line). The user should be able to ask for timetable information and information about planned trackwork for the fortnight ahead. The assignment consists of a basic task where the conversational agent is completely in control of the conversation and an advanced task in which the conversation shows some form of mixed-initiative between the conversational agent and the human (as discussed in the lecture). For the implementation of your agent, you have to use Python 3.6.x and SQLite, and optionally, if you wish, you can use the Natural Language Toolkit (NLTK). Please note: the aim of this assignment is to implement a goal-oriented conversational agent and not a chatbot. 
+
+2. Basic Task
+For this basic task, you have to implement a conversational agent who is always in control and drives the conversation. Your agent should be able to handle the following two dialogues (timetable information (2.1) and trackwork information (2.2)) that we will use to test your implementation. But of course, you don't want to hard-code these dialogues and you should allow for different trips and destinations on the Northern Line. Also, you should use a grammar (most likely implemented via regular expressions or string methods) that allows for some variation in the user input. The agent should recover gracefully if something goes wrong in a dialogue state and re-prompt the user accordingly.
+
+2.1 Timetable Information
+Computer:	Welcome to Sydney Train's text-based rail information service. This service will help you find convenient ways to travel by asking you a number of questions. If you are not sure about how to answer a question, simply type 'help'. You can 'quit' the conversation anytime.
+Computer:	Would you like timetable information or information on trackwork?
+User:	I would like timetable information.
+Computer:	Sure. What station would you like to leave from?
+User:	Epping.
+Computer:	Okay, Epping. And where are you travelling to?
+User:	Hmm - to Central Station.
+Computer:	Okay, to Central and do you want to travel on a weekday or on a weekend?
+User:	I want to travel next Monday.
+Computer:	Travelling on Monday, September 18, and what time would you like to depart from Epping?
+User:	At about 10:45 or so in the morning.
+Computer:	Let me see - I have a train leaving Epping at 10:47 and arriving at Central at 11:23. Would you like an earlier or later train?
+User:	A later one, please.
+Computer:	Let me check - I have a train leaving Epping at 11:00 and arriving at Central at 11:25. Would you like a later train?
+User:	No, thank you - this train suits me well.
+Computer:	Okay, thank you for tavelling with Sydney Train - cost effective, reliable and convenient.
+2.2 Trackwork Information
+Computer:	Welcome to Sydney Train's text-based rail information service. This service will help you finding convenient ways to travel by asking you a number of questions. If you are not sure about how to answer a question, simply type 'help'. You can 'quit' the conversation anytime.
+Computer:	Would you like timetable information or information on trackwork?
+User:	Trackwork information, please.
+Computer:	On what line are you planning to travel on?
+User:	Northern Line.
+Computer:	On what day will you be travelling?
+User:	On the sixteenth.
+Computer:	At what time?
+User:	10:00.
+Computer:	There is trackwork on the Northern Line on Saturday 16 September 02:00 to Monday 18 September 02:00; Buses replace trains between Hornsby and Strathfield via Eastwood.
+Computer:	Would you like more information on timetable or trackwork?
+User:	Timetable, please.
+Computer:	Sure. What station would you like to leave from?
+Note that the welcome prompt should only be used the first time and the user should be able to select between "timetable information" and "trackwork information".
+
+Note also that a dialogue state has the following general form:
+
+Prompts:
+Main prompt: Would you like timetable information or information on trackwork?
+
+Secondary prompt: Type either timetable or trackwork.
+
+Help prompt: This service can provide information on train timetable or trackwork information. Please type either timetable or trackwork.
+
+Expected Response: timetable|trackwork
+
+Grammar: Format of your choice (most likely, regular expressions or string methods)
+
+Event Handling: For example, if the answer is not in the scope of the grammar, then the user should be re-prompted or if the user types 'help', then the help prompt should be used. In certain states, the agent needs to connect to the database and extract the relevant information from there.
+
+This basic version of the conversational agent should be implemented as a Python program with the name train-1.py and the dialogue should run in the Python shell. Together with your main program, you have to submit all additional (non-standard) modules that are necessary to run your code.
+
+3. Advanced Task
+For the advanced task, you can take the work of the basic task as starting point and extend it. In the basic version, the agent is completely in control of the conversation and collects in each dialogue state one particular piece of information. However, this is not a very satisfactory solution: your dialogue design should allow for some degree of mixed-initiative, for example:
+
+Computer:	What train trip do you want to make?
+User:	I wanna travel from Epping to Central.
+Here, you have to collect two pieces of information during a dialogue state.
+
+How far you take this approach is up to you and you can come up with your own prompts in this advanced task. However, keep in mind that you want to strive for a high task completion rate and give the user an good experience. You can implement your own SQLite queries for this advanced task (if you like) and extend the database (if you like), and add additional features of your choice to the conversational agent. If you choose to add additional features to the conversational agent, you will need to document these features in a two-page report and explain why these feature add value to your system.
+
+This advanced version of the conversational agent should be implemented as a Python program with the name train-2.py and the dialogue should run in the Python shell. Together with your main program, you have to submit all additional (non-standard) modules that are necessary to run the advanced version of the code.
+
+4. SQLite Database
+In order to converse with the agent, you have to access an small SQLite database (train.db) where you can find the relevant information for the basic task. Since this assignment is not about databases and database design we provide only a very simple database which you can find under Assignment 1: Train Database together with a Python program (train-db.py) that has been used to generate the database. The database contains only information for connections on the Northern Line between about 10:20 and 12:20. Note that the following train stations are part of the Northern Line; this information is important because these names will be part -- among other things -- of your grammar.
+
+Hornsby
+Normanhurst
+Thornleigh
+Pennant Hills
+Beecroft
+Cheltenham
+Epping
+Eastwood
+Denistone
+West Ryde
+Meadowbank
+Rhodes
+Concord West
+North Strathfield
+Strathfield
+Burwood
+Redfern
+Central
+Town Hall
+Wynyard
+Milsons Point
+North Sydney
+Waverton
+Wollstonecraft
+St Leonards
+Artarmon
+Chatswood
+For the basic task of this assignment, you don't have write any SQL queries from scratch. The following two SQL queries answer the questions raised in the basic task where the user is looking for a train from Epping to Central that leaves Epping at around 10:45 on a weekday (WD) (note the code for weekend is WE) and whether there is some trackwork on the Northern Line on 16 August 2017 at 10:00 or not. You can use these SQL queries as templates for other (similar) queries.
+
+import sqlite3
+
+conn = sqlite3.connect('train.db')
+
+cursor1 = conn.execute("""
+   SELECT 'Epping', x.Departure_Time, 'Central',
+          strftime('%H:%M',datetime(y.Departure_Time, '-1 minute'))  
+   FROM   Schedule x, Schedule y
+   WHERE  x.Station_ID = (SELECT x.Station_ID FROM Station x
+                          WHERE  x.Station_Name = 'Epping') 
+          AND EXISTS (SELECT y.Station_ID
+                      WHERE  y.Train_ID = x.Train_ID
+                             AND y.Station_ID = (SELECT Station_ID FROM Station
+                                                 WHERE  Station_Name = 'Central')
+                      AND  x.Departure_Time < y.Departure_Time)
+          AND (SELECT Part_Of_Week
+               FROM   Train
+               WHERE  Train_ID = x.Train_ID) = 'WD'
+   ORDER BY
+         ABS(strftime('%s', x.Departure_Time) - strftime('%s', '10:45')) ASC;
+   """)
+
+print("Answer to SQL Query 1:")
+
+for row in cursor1: 
+   print(row)
+
+print('\n')
+
+cursor2 = conn.execute("""
+    SELECT Line_Name, Start_Date, End_Date, Message
+    FROM  Trackwork x, Line y  
+    WHERE x.Line_ID = y.LINE_ID AND Line_Name = 'Northern Line' AND
+          (strftime( '%s', Start_Date ) <= strftime( '%s', '2017-09-16 10:00') AND
+           strftime( '%s', End_Date )   >= strftime( '%s', '2017-09-16 10:00') )""")
+
+print("Answer to SQL Query 2:")
+
+for row in cursor2:
+   print(row)
+
+print('\n')
+      
+conn.close()
+The first SQL query returns the following information:
+
+('Epping', '10:47', 'Central', '11:23')
+('Epping', '10:32', 'Central', '11:08')
+('Epping', '10:30', 'Central', '10:55')
+('Epping', '11:00', 'Central', '11:25')
+('Epping', '11:02', 'Central', '11:38')
+('Epping', '11:17', 'Central', '11:53')
+As you can see there exists a train that leaves Epping at 10:47 and arrives at Central at 11:23. This is the closest match to the SQL query. There exist earlier and later trains.
+
+The second SQL query is pretty straightforward and returns the relevant trackwork information:
+
+('Northern Line', '2017-09-16 02:00', '2017-09-18 02:00', 
+ 'Buses replace trains between Hornsby and Strathfield via Eastwood.')
+You can find an introduction to SQLite in this tutorial.
+
+5. Assessment
+This assignment is worth 20 marks (= 20% of the final marks for COMP329). The basic task of the assignment is worth 14 marks and the advanced task is worth an additional 6 marks. You will be awarded marks according to the following guidelines:
+
+Basic Task
+
+Element	Marks	Description
+Functionality	8	The conversational agent processes both dialogues as illustrated above, re-prompts the user, if the input was not recognised, and provides help, if required, for each dialogue state.
+Grammar coverage	3	The grammar (regular expressions/string methods) shows some sophistication in pattern matching.
+Quality of the code	3	The Python code is modular, well-documented and uses a consistent naming convention.
+Advanced Task
+
+Element	Marks	Description
+Quality of prompts	2	The prompts have been selected carefully to implement a form of mixed-initiative.
+Additional features and report	4	The additional features (at most two) are useful, add value to the conversational agent, and are carefully implemented (2 marks). The choice of the additional features is well-motivated and clearly described in the report (2 marks).
+6. Submission
+You have to submit a ZIP file comp329-assignment-1.zip that contains the Python program train-1.py for the basic version of the conversational agent and the Python program train-2.py for the advanced version, incl. all (non-standard) modules and the SQLite database that are necessary to run your code. Your code needs to run out-of-the-box, we only assume a basic Python installation together with the NLTK toolkit. If you submit a solution to the advanced task of the assignment that contains additional features, then you have to add a two-page report in form of a PDF file to the ZIP file of your submission. Please submit this ZIP file via iLearn before Wednesday, 4th October 2017, 12:00 (noon).
